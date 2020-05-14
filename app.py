@@ -1,9 +1,11 @@
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from models import setup_db
 
 app = Flask(__name__)
 CORS(app)
+setup_db(app)
 
 @app.route('/')
 def index():
