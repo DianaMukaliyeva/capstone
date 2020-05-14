@@ -6,11 +6,9 @@ database_path = os.getenv('DATABASE_URL')
 
 db = SQLAlchemy()
 
-'''
-setup_db(app)
-    binds a flask application and a SQLAlchemy service
-'''
 def setup_db(app, database_path=database_path):
+    '''Binds a flask application and a SQLAlchemy service.'''
+
     app.config['SQLALCHEMY_DATABASE_URI'] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
@@ -25,11 +23,11 @@ movie_actor = db.Table('movie_actor',
     db.Column('actor_id', db.Integer, db.ForeignKey('actors.id'), primary_key=True))
 
 
-'''
-Movie
-Have title and release date
-'''
 class Movie(db.Model):
+    '''
+    Movie
+    Has title and release date
+    '''
     __tablename__ = 'movies'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -60,11 +58,11 @@ class Movie(db.Model):
         }
 
 
-'''
-Actor
-Have name, age and gender
-'''
 class Actor(db.Model):
+    '''
+    Actor
+    Has name, age and gender
+    '''
     __tablename__ = 'actors'
 
     id = db.Column(db.Integer, primary_key=True)
