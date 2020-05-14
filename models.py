@@ -1,5 +1,5 @@
 import os
-
+import dateutil.parser
 from flask_sqlalchemy import SQLAlchemy
 
 database_path = os.getenv('DATABASE_URL')
@@ -56,7 +56,7 @@ class Movie(db.Model):
         return {
             'id': self.id,
             'title': self.title,
-            'release_date': self.release_date
+            'release_date': self.release_date.strftime('%A, %b %d %Y')
         }
 
 
