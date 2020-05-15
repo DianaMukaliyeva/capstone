@@ -12,6 +12,7 @@ from flask_cors import CORS
 from auth0 import AuthError, requires_auth
 from models import setup_db, Movie, Actor
 
+
 def create_app():
     app = Flask(__name__)
     CORS(app, resources={r'/*': {'origins': '*'}})
@@ -22,9 +23,9 @@ def create_app():
         """Intercept response to add 'Access-Control-Allow' headers"""
 
         response.headers.add('Access-Control-Allow-Headers',
-                                'Content-Type, Authorization, True')
+                             'Content-Type, Authorization, True')
         response.headers.add('Access-Control-Allow-Methods',
-                                'GET, POST, PATCH, DELETE, OPTIONS')
+                             'GET, POST, PATCH, DELETE, OPTIONS')
         return response
 
     @app.route('/')
@@ -96,7 +97,7 @@ def create_app():
         data = request.get_json()
         try:
             movie = Movie(title=data.get('title'),
-                            release_date=data.get('release_date'))
+                          release_date=data.get('release_date'))
             movie.insert()
 
             return jsonify({
@@ -394,6 +395,7 @@ def create_app():
         }), error.status_code
 
     return app
+
 
 APP = create_app()
 
