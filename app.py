@@ -9,7 +9,8 @@ from flask import (
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-from models import setup_db, Movie, Actor
+from auth.auth0 import AuthError, requires_auth
+from database.models import setup_db, Movie, Actor
 
 
 def create_app():
@@ -44,7 +45,8 @@ def create_app():
     # ---------------------------------------------------------
 
     @app.route('/movies')
-    def get_movies():
+    @requires_auth('get:movies')
+    def get_movies(jwt):
         '''Get all movies from database
 
         Returns in json format
@@ -59,6 +61,7 @@ def create_app():
         })
 
     @app.route('/movies/<int:movie_id>')
+    @requires_auth('get:movies')
     def get_actors_in_movie(movie_id):
         '''Get list of assigned actors for the movie with given id
 
@@ -84,6 +87,7 @@ def create_app():
             abort(400)
 
     @app.route('/movies', methods=['POST'])
+    @requires_auth('post:movies')
     def create_movie():
         '''Add a movie to database
 
@@ -111,6 +115,7 @@ def create_app():
             abort(422)
 
     @app.route('/movies/<int:movie_id>', methods=['PATCH'])
+    @requires_auth('patch:movies')
     def update_movie(movie_id):
         '''Modify a movie with given id
 
@@ -157,6 +162,7 @@ def create_app():
             abort(400)
 
     @app.route('/movies/<int:movie_id>', methods=['DELETE'])
+    @requires_auth('delete:movies')
     def delete_movie(movie_id):
         '''Delete a movie from database
 
@@ -186,6 +192,7 @@ def create_app():
     # --------------------------------------------------------
 
     @app.route('/actors')
+    @requires_auth('get:actors')
     def get_actors():
         '''Get all actors from database
 
@@ -201,6 +208,7 @@ def create_app():
         })
 
     @app.route('/actors/<int:actor_id>')
+    @requires_auth('get:actors')
     def get_movies_from_actor(actor_id):
         '''Get a list of movies where the actor is assigned
 
@@ -226,6 +234,7 @@ def create_app():
             abort(400)
 
     @app.route('/actors', methods=['POST'])
+    @requires_auth('post:actors')
     def create_actor():
         '''Add an actor to database
 
@@ -260,6 +269,7 @@ def create_app():
             abort(422)
 
     @app.route('/actors/<int:actor_id>', methods=['PATCH'])
+    @requires_auth('patch:actors')
     def update_actor(actor_id):
         '''Modify an actor with given id
 
@@ -312,6 +322,7 @@ def create_app():
             abort(400)
 
     @app.route('/actors/<int:actor_id>', methods=['DELETE'])
+    @requires_auth('delete:actors')
     def delete_actor(actor_id):
         '''Delete an actor from database
 
@@ -370,14 +381,24 @@ def create_app():
             'message': 'unprocessable'
         }), 422
 
-    # @app.errorhandler(Exception)
-    # def internal_error(error):
-    #     '''Generic error handler for all exceptions'''
+    @app.errorhandler(Exception)
+    def internal_error(error):
+        '''Generic error handler for all exceptions'''
 
-    #     return jsonify({
-    #         'success': False,
-    #         'error': 500,
-    #         'message': 'Something went wrong!'
-    #     }), 500
+        return jsonify({
+            'success': False,
+            'error': 500,
+            'message': 'Something went wrong!'
+        }), 500
+
+    @app.errorhandler(AuthError)
+    def authorization_error(error):
+        '''Generic error handler for all exceptions'''
+
+        return jsonify({
+            'success': False,
+            'error': error.status_code,
+            'message': error.error
+        }), error.status_code
 
     return app
