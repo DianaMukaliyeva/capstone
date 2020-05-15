@@ -26,6 +26,8 @@ def create_app():
 
     @app.after_request
     def after_request(response):
+        """Intercept response to add 'Access-Control-Allow' headers"""
+
         response.headers.add('Access-Control-Allow-Headers',
                              'Content-Type, Authorization, True')
         response.headers.add('Access-Control-Allow-Methods',
@@ -34,6 +36,8 @@ def create_app():
 
     @app.route('/')
     def index():
+        '''Greeting from Custom Agency'''
+
         return 'Hello there! You are about to sign in to Casting agency.\n'
 
     # Movies
@@ -54,7 +58,7 @@ def create_app():
             'movies': [movie.format() for movie in movies]
         })
 
-    @app.route('/movies/<int:movie_id>/actors')
+    @app.route('/movies/<int:movie_id>')
     def get_actors_in_movie(movie_id):
         '''Get list of assigned actors for the movie with given id
 
@@ -65,7 +69,7 @@ def create_app():
         Returns in json format
         ----------------------
         movie: movie's id, title and release date
-        actors: list of actors in selected movie
+        movie\'s actors: list of actors in selected movie
         '''
 
         movie = Movie.query.filter_by(id=movie_id).one_or_none()
@@ -73,8 +77,8 @@ def create_app():
             abort(404)
         try:
             return jsonify({
-                'movie': movie.format(),
-                'actors': [actor.format() for actor in movie.actors]
+                'movie\'s name': movie.title,
+                'movie\'s actors': [actor.format() for actor in movie.actors]
             })
         except Exception:
             abort(400)
@@ -114,6 +118,8 @@ def create_app():
         ------------------------
         title: name of movie, optional
         release_date: release date of movie, optional
+        actors: list of actors ids assigned to the movie,
+                list of integers, optional
 
         Parameters
         ----------
@@ -133,6 +139,14 @@ def create_app():
                 movie.title = data.get('title')
             if 'release_date' in data:
                 movie.release_date = data.get('release_date')
+            if 'actors' in data:
+                actors = data.get('actors')
+                movie.actors = []
+                for actor_id in actors:
+                    actor = Actor.query.filter_by(id=actor_id).one_or_none()
+                    if actor is None:
+                        raise Exception
+                    movie.actors.append(actor)
             movie.update()
 
             return jsonify({
@@ -186,7 +200,7 @@ def create_app():
             'actors': [actor.format() for actor in actors]
         })
 
-    @app.route('/actors/<int:actor_id>/movies')
+    @app.route('/actors/<int:actor_id>')
     def get_movies_from_actor(actor_id):
         '''Get a list of movies where the actor is assigned
 
@@ -254,6 +268,8 @@ def create_app():
         name: name of actor, string, optional
         age: age of actor, integer, optional
         gender: actor's gender, string (male, female or other), optional
+        movies: list of movies ids to which actor is assigned,
+                list of integers, optional
 
         Parameters
         ----------
@@ -278,6 +294,14 @@ def create_app():
                 if gender not in ['male', 'female', 'other']:
                     raise Exception
                 actor.gender = gender
+            if 'movies' in data:
+                movies = data.get('movies')
+                actor.movies = []
+                for movie_id in movies:
+                    movie = Movie.query.filter_by(id=movie_id).one_or_none()
+                    if movie is None:
+                        raise Exception
+                    actor.movies.append(movie)
             actor.update()
 
             return jsonify({
@@ -313,6 +337,9 @@ def create_app():
         except Exception:
             abort(422)
 
+    # Error handling
+    # ------------------------------------------------
+
     @app.errorhandler(400)
     def bad_request(error):
         '''Error handler for 400'''
@@ -343,14 +370,14 @@ def create_app():
             'message': 'unprocessable'
         }), 422
 
-    @app.errorhandler(Exception)
-    def internal_error(error):
-        '''Generic error handler for all exceptions'''
+    # @app.errorhandler(Exception)
+    # def internal_error(error):
+    #     '''Generic error handler for all exceptions'''
 
-        return jsonify({
-            'success': False,
-            'error': 500,
-            'message': 'Something went wrong!'
-        }), 500
+    #     return jsonify({
+    #         'success': False,
+    #         'error': 500,
+    #         'message': 'Something went wrong!'
+    #     }), 500
 
     return app
