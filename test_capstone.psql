@@ -1,0 +1,23 @@
+--
+-- PostgreSQL database test
+--
+
+CREATE TABLE public.actors (
+    id integer NOT NULL PRIMARY KEY,
+    name text,
+    age integer,
+    gender text
+);
+
+CREATE TABLE public.movies (
+    id integer NOT NULL PRIMARY KEY,
+    title text,
+    release_date timestamp without time zone
+);
+
+CREATE TABLE public.movie_actor (
+    movie_id integer REFERENCES movies(id) ON DELETE CASCADE,
+    actor_id integer REFERENCES actors(id) ON DELETE CASCADE,
+    PRIMARY KEY (movie_id,actor_id)
+);
+
