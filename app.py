@@ -11,179 +11,193 @@ from flask_cors import CORS
 
 from models import setup_db, Movie, Actor
 
-app = Flask(__name__)
-CORS(app)
-setup_db(app)
 
-@app.route('/')
-def index():
-    return redirect(url_for('get_movies'))
+def create_app():
+    '''Creates and sets up a Flask application
 
-
-# Movies
-# ---------------------------------------------------------------------------
-
-@app.route('/movies')
-def get_movies():
-    '''Get all movies from database
-
-    Returns in json format
-    ----------------------
-    movies: list of movies (id, title and release date)
+    Returns
+    -------
+    Flask application
     '''
 
-    movies = Movie.query.all()
-    return jsonify({
-        'status': True,
-        'movies': [movie.format() for movie in movies]
-    })
+    app = Flask(__name__)
+    CORS(app, resources={r'/*': {'origins': '*'}})
+    setup_db(app)
 
-@app.route('/movies/<int:movie_id>/actors')
-def get_actors_in_movie(movie_id):
-    '''Get list of assigned actors for the movie with given id
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Headers',
+                             'Content-Type, Authorization, True')
+        response.headers.add('Access-Control-Allow-Methods',
+                             'GET, POST, PATCH, DELETE, OPTIONS')
+        return response
 
-    Parameters
-    ----------
-    movie_id: integer representing the movie
+    @app.route('/')
+    def index():
+        return 'Hello there! You are about to sign in to Casting agency.\n'
 
-    Returns in json format
-    ----------------------
-    movie: movie's id, title and release date
-    actors: list of actors in selected movie
-    '''
-    pass
+    # Movies
+    # ---------------------------------------------------------
 
-@app.route('/movies/', methods=['POST'])
-def create_movie():
-    '''Add a movie to database
+    @app.route('/movies')
+    def get_movies():
+        '''Get all movies from database
 
-    Arguments in json format
-    ------------------------
-    title: name of movie to be created
-    release_date: release date of movie to be created
+        Returns in json format
+        ----------------------
+        movies: list of movies (id, title and release date)
+        '''
 
-    Returns json object
-    -------------------
-    movie: movie's id, title and release date
-    '''
-    pass
+        movies = Movie.query.all()
+        return jsonify({
+            'success': True,
+            'movies': [movie.format() for movie in movies]
+        })
 
+    # @app.route('/movies/<int:movie_id>/actors')
+    # def get_actors_in_movie(movie_id):
+    #     '''Get list of assigned actors for the movie with given id
 
-@app.route('/movies/<int:movie_id>', methods=['PATCH'])
-def update_movie(movie_id):
-    '''Modify a movie with given id
+    #     Parameters
+    #     ----------
+    #     movie_id: integer representing the movie
 
-    Arguments in json format
-    ------------------------
-    title: name of movie, optional
-    release_date: release date of movie, optional
+    #     Returns in json format
+    #     ----------------------
+    #     movie: movie's id, title and release date
+    #     actors: list of actors in selected movie
+    #     '''
+    #     pass
 
-    Parameters
-    ----------
-    movie_id: integer representing the movie to be updated
+    # @app.route('/movies/', methods=['POST'])
+    # def create_movie():
+    #     '''Add a movie to database
 
-    Returns json object
-    -------------------
-    movie: movie's id, title and release date
-    '''
-    pass
+    #     Arguments in json format
+    #     ------------------------
+    #     title: name of movie to be created
+    #     release_date: release date of movie to be created
 
-@app.route('/movies/<int:movie_id>', method=['DELETE'])
-def delete_movie(movie_id):
-    '''Delete a movie from database
+    #     Returns json object
+    #     -------------------
+    #     movie: movie's id, title and release date
+    #     '''
+    #     pass
 
-    Parameters
-    ----------
-    movie_id: integer representing the movie to be deleted
+    # @app.route('/movies/<int:movie_id>', methods=['PATCH'])
+    # def update_movie(movie_id):
+    #     '''Modify a movie with given id
 
-    Returns json object
-    -------------------
-    delete: deleted movie's id and title
-    '''
-    pass
+    #     Arguments in json format
+    #     ------------------------
+    #     title: name of movie, optional
+    #     release_date: release date of movie, optional
 
+    #     Parameters
+    #     ----------
+    #     movie_id: integer representing the movie to be updated
 
-# Actors
-# ---------------------------------------------------------------------------
+    #     Returns json object
+    #     -------------------
+    #     movie: movie's id, title and release date
+    #     '''
+    #     pass
 
-@app.route('/actors')
-def get_actors():
-    '''Get all actors from database
+    # @app.route('/movies/<int:movie_id>', method=['DELETE'])
+    # def delete_movie(movie_id):
+    #     '''Delete a movie from database
 
-    Returns in json format
-    ----------------------
-    actors: list of actors (id, name, age and gender)
-    '''
+    #     Parameters
+    #     ----------
+    #     movie_id: integer representing the movie to be deleted
 
-    actors = Actor.query.all()
-    return jsonify({
-        'status': True,
-        'actors': [actor.format() for actor in actors]
-    })
+    #     Returns json object
+    #     -------------------
+    #     delete: deleted movie's id and title
+    #     '''
+    #     pass
 
-@app.route('/actors/<int:actor_id>/movies')
-def get_movies_from_actor(actor_id):
-    '''Get a list of movies where the actor is assigned
+    # # Actors
+    # # --------------------------------------------------------
 
-    Parameters
-    ----------
-    actor_id: integer representing the actor
+    # @app.route('/actors')
+    # def get_actors():
+    #     '''Get all actors from database
 
-    Returns in json format
-    ----------------------
-    actor: actor's id, name
-    movies: list of movies
-    '''
-    pass
+    #     Returns in json format
+    #     ----------------------
+    #     actors: list of actors (id, name, age and gender)
+    #     '''
 
-@app.route('/actors/', methods=['POST'])
-def create_actor():
-    '''Add an actor to database
+    #     actors = Actor.query.all()
+    #     return jsonify({
+    #         'status': True,
+    #         'actors': [actor.format() for actor in actors]
+    #     })
 
-    Arguments in json format
-    ------------------------
-    name: name of actor to be added, string
-    age: actor's age, integer
-    gender: actor's gender (male, female or other), string
+    # @app.route('/actors/<int:actor_id>/movies')
+    # def get_movies_from_actor(actor_id):
+    #     '''Get a list of movies where the actor is assigned
 
-    Returns json object
-    -------------------
-    actor: actor's id, name, age and gender
-    '''
-    pass
+    #     Parameters
+    #     ----------
+    #     actor_id: integer representing the actor
 
+    #     Returns in json format
+    #     ----------------------
+    #     actor: actor's id, name
+    #     movies: list of movies
+    #     '''
+    #     pass
 
-@app.route('/actors/<int:actor_id>', methods=['PATCH'])
-def update_actor(actor_id):
-    '''Modify an actor with given id
+    # @app.route('/actors/', methods=['POST'])
+    # def create_actor():
+    #     '''Add an actor to database
 
-    Arguments in json format
-    ------------------------
-    name: name of actor, string, optional
-    age: age of actor, integer, optional
-    gender: actor's gender, string (male, female or other), optional
+    #     Arguments in json format
+    #     ------------------------
+    #     name: name of actor to be added, string
+    #     age: actor's age, integer
+    #     gender: actor's gender (male, female or other), string
 
-    Parameters
-    ----------
-    actor_id: integer representing the actor to be updated
+    #     Returns json object
+    #     -------------------
+    #     actor: actor's id, name, age and gender
+    #     '''
+    #     pass
 
-    Returns json object
-    -------------------
-    actor: actor's id, name, age and gender
-    '''
-    pass
+    # @app.route('/actors/<int:actor_id>', methods=['PATCH'])
+    # def update_actor(actor_id):
+    #     '''Modify an actor with given id
 
-@app.route('/actors/<int:actor_id>', method=['DELETE'])
-def delete_actor(actor_id):
-    '''Delete an actor from database
+    #     Arguments in json format
+    #     ------------------------
+    #     name: name of actor, string, optional
+    #     age: age of actor, integer, optional
+    #     gender: actor's gender, string (male, female or other), optional
 
-    Parameters
-    ----------
-    actor_id: integer representing the actor to be deleted
+    #     Parameters
+    #     ----------
+    #     actor_id: integer representing the actor to be updated
 
-    Returns json object
-    -------------------
-    delete: deleted actor's id and name
-    '''
-    pass
+    #     Returns json object
+    #     -------------------
+    #     actor: actor's id, name, age and gender
+    #     '''
+    #     pass
 
+    # @app.route('/actors/<int:actor_id>', method=['DELETE'])
+    # def delete_actor(actor_id):
+    #     '''Delete an actor from database
+
+    #     Parameters
+    #     ----------
+    #     actor_id: integer representing the actor to be deleted
+
+    #     Returns json object
+    #     -------------------
+    #     delete: deleted actor's id and name
+    #     '''
+    #     pass
+
+    return app

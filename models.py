@@ -1,10 +1,13 @@
 import os
 import dateutil.parser
+
+from sqlalchemy import Column, Integer, String, DateTime
 from flask_sqlalchemy import SQLAlchemy
 
 database_path = os.getenv('DATABASE_URL')
 
 db = SQLAlchemy()
+
 
 def setup_db(app, database_path=database_path):
     '''Binds a flask application and a SQLAlchemy service.'''
@@ -14,13 +17,13 @@ def setup_db(app, database_path=database_path):
     db.app = app
     db.init_app(app)
 
-'''
-Movie-Actor helper table
-Many-to-many relationship between movies and actors
-'''
-movie_actor = db.Table('movie_actor',
-    db.Column('movie_id', db.Integer, db.ForeignKey('movies.id'), primary_key=True),
-    db.Column('actor_id', db.Integer, db.ForeignKey('actors.id'), primary_key=True))
+
+# Many-to-many relationship between movies and actors
+movie_actor = db.Table(
+    'movie_actor',
+    Column('movie_id', Integer, db.ForeignKey('movies.id'), primary_key=True),
+    Column('actor_id', Integer, db.ForeignKey('actors.id'), primary_key=True)
+)
 
 
 class Movie(db.Model):
@@ -30,9 +33,9 @@ class Movie(db.Model):
     '''
     __tablename__ = 'movies'
 
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(80), nullable=False)
-    release_date = db.Column(db.DateTime, nullable=False)
+    id = Column(Integer, primary_key=True)
+    title = Column(String(80), nullable=False)
+    release_date = Column(DateTime, nullable=False)
     actors = db.relationship('Actor', secondary=movie_actor, backref='movies')
 
     def __init__(self, title, release_date):
@@ -65,10 +68,10 @@ class Actor(db.Model):
     '''
     __tablename__ = 'actors'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    age = db.Column(db.Integer, nullable=False)
-    gender = db.Column(db.String, nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(80), nullable=False)
+    age = Column(Integer, nullable=False)
+    gender = Column(String, nullable=False)
 
     def __init__(self, name, age, gender):
         self.name = name,
@@ -93,5 +96,3 @@ class Actor(db.Model):
             'age': self.age,
             'gender': self.gender
         }
-
-
