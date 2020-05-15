@@ -62,7 +62,7 @@ def create_app():
 
     @app.route('/movies/<int:movie_id>')
     @requires_auth('get:movies')
-    def get_actors_in_movie(movie_id):
+    def get_actors_in_movie(jwt, movie_id):
         '''Get list of assigned actors for the movie with given id
 
         Parameters
@@ -88,7 +88,7 @@ def create_app():
 
     @app.route('/movies', methods=['POST'])
     @requires_auth('post:movies')
-    def create_movie():
+    def create_movie(jwt):
         '''Add a movie to database
 
         Arguments in json format
@@ -116,7 +116,7 @@ def create_app():
 
     @app.route('/movies/<int:movie_id>', methods=['PATCH'])
     @requires_auth('patch:movies')
-    def update_movie(movie_id):
+    def update_movie(jwt, movie_id):
         '''Modify a movie with given id
 
         Arguments in json format
@@ -163,7 +163,7 @@ def create_app():
 
     @app.route('/movies/<int:movie_id>', methods=['DELETE'])
     @requires_auth('delete:movies')
-    def delete_movie(movie_id):
+    def delete_movie(jwt, movie_id):
         '''Delete a movie from database
 
         Parameters
@@ -193,7 +193,7 @@ def create_app():
 
     @app.route('/actors')
     @requires_auth('get:actors')
-    def get_actors():
+    def get_actors(jwt):
         '''Get all actors from database
 
         Returns in json format
@@ -209,7 +209,7 @@ def create_app():
 
     @app.route('/actors/<int:actor_id>')
     @requires_auth('get:actors')
-    def get_movies_from_actor(actor_id):
+    def get_movies_from_actor(jwt, actor_id):
         '''Get a list of movies where the actor is assigned
 
         Parameters
@@ -235,7 +235,7 @@ def create_app():
 
     @app.route('/actors', methods=['POST'])
     @requires_auth('post:actors')
-    def create_actor():
+    def create_actor(jwt):
         '''Add an actor to database
 
         Arguments in json format
@@ -270,7 +270,7 @@ def create_app():
 
     @app.route('/actors/<int:actor_id>', methods=['PATCH'])
     @requires_auth('patch:actors')
-    def update_actor(actor_id):
+    def update_actor(jwt, actor_id):
         '''Modify an actor with given id
 
         Arguments in json format
@@ -323,7 +323,7 @@ def create_app():
 
     @app.route('/actors/<int:actor_id>', methods=['DELETE'])
     @requires_auth('delete:actors')
-    def delete_actor(actor_id):
+    def delete_actor(jwt, actor_id):
         '''Delete an actor from database
 
         Parameters
