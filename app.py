@@ -30,9 +30,11 @@ def create_app():
 
     @app.route('/')
     def index():
-        '''Greeting from Custom Agency'''
+        '''Redirecting to login page'''
 
-        return 'Hello there! You are about to sign in to Casting agency.\n'
+        return redirect('https://capstone-udacity.eu.auth0.com/authorize?audience=capstone&response_type=token&\
+            client_id=8V0Rt7JzfDgHBnHXd5gWJ1uMxkfnFu1l&\
+            redirect_uri=https://capstone-udacity1.herokuapp.com/movies')
 
     # Movies
     # ---------------------------------------------------------
@@ -166,7 +168,7 @@ def create_app():
 
         Returns json object
         -------------------
-        deleted: deleted movie's id and title
+        deleted: deleted movie
         '''
 
         movie = Movie.query.filter_by(id=movie_id).one_or_none()
@@ -212,7 +214,7 @@ def create_app():
 
         Returns in json format
         ----------------------
-        actor: actor's id, name
+        actor: actor
         movies: list of movies
         '''
 
@@ -327,7 +329,7 @@ def create_app():
 
         Returns json object
         -------------------
-        delete: deleted actor's id and name
+        delete: deleted actor
         '''
 
         actor = Actor.query.filter_by(id=actor_id).one_or_none()
