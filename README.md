@@ -12,7 +12,29 @@ The motivation for doing this project was the opportunity to consolidate what I 
 
 ### Authentication:
 
-Authentication is required to communicate with api.
+The application uses Auth0 for authenticating users. I have created 3 test users with different roles to test the
+application.
+
+**Casting Assistant**
+
+- Username => `asisstant@assistant.com`
+- Password => `Assistant1`
+- Permission => Can view actors and movies
+- valid_token until 17.05 19:00 => in `setup.sh` file
+
+**Casting Director**
+
+- Username => `director@director.com`
+- Password => `Director1`
+- Permission => Can view actors and movies. Add or delete an actor from the database. Modify actors or movies.
+- valid_token until 17.05 19:00 => in `setup.sh` file
+
+**Executive Producer**
+
+- Username => `producer@producer`
+- Password => `Producer1`
+- Permission => Can view actors and movies.  Add or delete an actor from the database. Modify actors or movies. Add or delete a movie from the database.
+- valid_token until 17.05 19:00 => in `setup.sh` file
 
 ### Prerequisites
 
@@ -67,30 +89,6 @@ In production change `FLASK_ENV` to `production`.
 The application will be serve on **http://localhost:5000**
 
 ## Testing
-
-The application uses Auth0 for authenticating users. I have created 3 test users with different roles to test the
-application.
-
-**Casting Assistant**
-
-- Username => `asisstant@assistant.com`
-- Password => `Assistant1`
-- Permission => Can view actors and movies
-- valid_token until 17.05 19:00 => in `setup.sh` file
-
-**Casting Director**
-
-- Username => `director@director.com`
-- Password => `Director1`
-- Permission => Can view actors and movies. Add or delete an actor from the database. Modify actors or movies.
-- valid_token until 17.05 19:00 => in `setup.sh` file
-
-**Executive Producer**
-
-- Username => `producer@producer`
-- Password => `Producer1`
-- Permission => Can view actors and movies.  Add or delete an actor from the database. Modify actors or movies. Add or delete a movie from the database.
-- valid_token until 17.05 19:00 => in `setup.sh` file
 
 To run the tests, run
 ```
