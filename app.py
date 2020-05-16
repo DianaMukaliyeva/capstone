@@ -1,5 +1,3 @@
-import os
-
 from flask import (
     Flask,
     request,
@@ -32,11 +30,9 @@ def create_app():
 
     @app.route('/')
     def index():
-        '''Redirecting to login page'''
+        '''Greeting from Custom Agency'''
 
-        return redirect('https://capstone-udacity.eu.auth0.com/authorize?response_type=token\
-            &client_id=8V0Rt7JzfDgHBnHXd5gWJ1uMxkfnFu1l\
-            &redirect_uri={}'.format(os.getenv('REDIRECT_URI')))
+        return 'Hello there! You are about to sign in to Casting agency.\n'
 
     # Movies
     # ---------------------------------------------------------
@@ -170,7 +166,7 @@ def create_app():
 
         Returns json object
         -------------------
-        deleted: deleted movie
+        deleted: deleted movie's id and title
         '''
 
         movie = Movie.query.filter_by(id=movie_id).one_or_none()
@@ -216,7 +212,7 @@ def create_app():
 
         Returns in json format
         ----------------------
-        actor: actor
+        actor: actor's id, name
         movies: list of movies
         '''
 
@@ -331,7 +327,7 @@ def create_app():
 
         Returns json object
         -------------------
-        delete: deleted actor
+        delete: deleted actor's id and name
         '''
 
         actor = Actor.query.filter_by(id=actor_id).one_or_none()
