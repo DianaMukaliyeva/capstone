@@ -32,24 +32,20 @@ pip install -r requirements.txt
 
 This will install all of the required packages we selected within the `requirements.txt` file.
 
-##### ENVIRONMENTAL  VARIABLES
+##### Environmental variables
 
-Within the cloned directore run next commands replacing with your environment variables.
+Within the cloned directore run next commands replacing `DATABASE_URL` with your information.
 
 ```bash
-export DATABASE_URL=<your_database_url>
+source setup.sh
 ```
 
 #### Database Setup
+
+Create database and for database  migration, run
+
 ```bash
 createdb capstone
-```
-
-## Database Migration
-for database migration, run
-```
-python3 manage.py db init
-python3 manage.py db migrate
 python3 manage.py db upgrade
 ```
 
@@ -78,17 +74,17 @@ application.
 **Casting Assistant**
 Username => `asisstant@assistant.com`
 Password => `Assistant1`
-valid_token until 17.05 19:00 => `m`
+valid_token until 17.05 19:00 => in `setup.sh` file
 
 **Casting Director**
 Username => `director@director.com`
 Password => `Director1`
-valid_token until 17.05 19:00 => `m`
+valid_token until 17.05 19:00 => in `setup.sh` file
 
 **Executive Producer**
 Username => `producer@producer`
 Password => `Producer1`
-valid_token until 17.05 19:00 => `m`
+valid_token until 17.05 19:00 => in `setup.sh` file
 
 To run the tests, run
 ```
@@ -97,173 +93,232 @@ createdb capstone_test
 psql capstone_test < test_capstone.psql
 python test_app.py
 ```
+And do not forget to `source setup.sh` to export tokens (if necessary replace with valid tokens).
 
 ## API Documentation
 
 #### GET '/movies'
 
-  * Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-  * Request Arguments: None
-  * Response: An object with a single key, categories, that contains an object of id: category_string key:value pairs. 
-  * Sample:  `curl localhost:5000/categories`
+  * Fetches a list of movies.
+  * Request Arguments: None.
+  * Response: A list of movies (id, title and release date).
+  * Sample: 
+        ```
+        curl 'https://capstone-udacity1.herokuapp.com/movies' --header 'Authorization: Bearer <token>'
+        ```
 ```
 {
-  "categories": {
-    "1": "Science",
-    "2": "Art",
-    "3": "Geography",
-    "4": "History",
-    "5": "Entertainment",
-    "6": "Sports"
-  }
+    "movies": [
+        {
+            "id": 2,
+            "release_date": "Sunday, Jul 25 2021",
+            "title": "New Movie soon"
+        }
+    ],
+    "success": true
 }
 ```
 
 #### GET '/actors'
 
-  * Fetches the questions to be displayed on the page.
-  * Request Arguments: `page`. By default value of page = 1.
-  * Response: a list of question objects, a dictionary of categories, current category and total number of questions as JSON object. Results of questions are paginated in groups of 10.
-  * Sample:  `curl localhost:5000/questions?page=2`
+  * Fetches a list of actors.
+  * Request Arguments: None.
+  * Response: A list of actors (id, name, age and gender).
+  * Sample: 
+        ```
+        curl 'https://capstone-udacity1.herokuapp.com/actors' --header 'Authorization: Bearer <token>'
+        ```
 ```
 {
-  "categories": {
-    "1": "Science",
-    "2": "Art",
-    "3": "Geography",
-    "4": "History",
-    "5": "Entertainment",
-    "6": "Sports"
-  },
-  "current_category": null,
-  "questions": [
-    {
-      "answer": "Apollo 13",
-      "category": 5,
-      "difficulty": 4,
-      "id": 2,
-      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
-    }
-  ],
-  "total_questions": 1
+    "actors": [
+        {
+            "age": 55,
+            "gender": "male",
+            "id": 1,
+            "name": "John Smith"
+        }
+    ],
+    "success": true
 }
 ```
 
-#### DELETE '/movies/{question_id}'
+#### GET '/movies/{movie_id}'
 
-  * Deletes the question of the given ID if it exists.
-  * Request Parameters: `question_id`. ID of the existing question
-  * Response: the ID of the deleted question.
-  * Sample:  `curl localhost:5000/questions/22 -X DELETE`
+  * Fetches the list of assigned actors for the movie with given id.
+  * Request Parameters: `movie_id`. ID of the existing movie
+  * Response:  movie's title and list of actors in selected movie.
+  * Sample: 
+        ```
+        curl 'https://capstone-udacity1.herokuapp.com/movies/1' --header 'Authorization: Bearer <token>'
+        ```
 ```
 {
-  "deleted": 22
+    "actors": [
+        {
+            "age": 55,
+            "gender": "male",
+            "id": 4,
+            "name": "John Smith"
+        },
+        {
+            "age": 55,
+            "gender": "male",
+            "id": 5,
+            "name": "John Smith"
+        }
+    ],
+    "success": true,
+    "title": "Movie with ID 1"
+}
+```
+
+#### GET '/actors/{actor_id}'
+
+  * Fetches the list of movies where the actor is assigned.
+  * Request Parameters: `actor_id`. ID of the existing actor.
+  * Response: an actor and list of movies.
+  * Sample: 
+        ```
+        curl 'https://capstone-udacity1.herokuapp.com/actors/1' --header 'Authorization: Bearer <token>'
+        ```
+```
+{
+    "actor": {
+        "age": 55,
+        "gender": "female",
+        "id": 1,
+        "name": "new name"
+    },
+    "movies": [],
+    "success": true
+}
+```
+
+#### DELETE '/movies/{movie_id}'
+
+  * Deletes the movie of the given ID if it exists.
+  * Request Parameters: `movie_id`. ID of the existing movie.
+  * Response: deleted movie.
+  * Sample: 
+        ```
+        curl -X DELETE 'https://capstone-udacity1.herokuapp.com/movies/5' --header 'Authorization: Bearer <token>'
+        ```
+```
+{
+    "deleted": {
+        "id": 5,
+        "release_date": "Sunday, Jul 25 2021",
+        "title": "New Movie soon"
+    },
+    "success": true
+}
+```
+
+#### DELETE '/actors/{actor_id}'
+
+  * Deletes the actor of the given ID if it exists.
+  * Request Parameters: `actor_id`. ID of the existing actor
+  * Response: The deleted actor.
+  * Sample: 
+        ```
+        curl -X DELETE 'https://capstone-udacity1.herokuapp.com/actors/5' --header 'Authorization: Bearer <token>'
+        ```
+```
+{
+    "deleted": {
+        "age": 55,
+        "gender": "male",
+        "id": 5,
+        "name": "John Smith"
+    },
+    "success": true
 }
 ```
 
 #### POST '/movies'
 
-    * Search for all questions that have a given search string in the question field.
-    * Returns a list of question objects, current category and total number of returned questions as JSON object.
-    * Request Arguments: `searchTerm`. The search phrase.
-    * Results of questions are paginated in groups of 10. Include a request argument to choose page number, starting from 1.
-    * Sample:
-         `curl localhost:5000/questions -X POST -H "Content-Type: application/json" -d '{"searchTerm": "movie"}'`
+  * Add a movie to database.
+  * Request Arguments: `title`, `release_date`. `Release_date` should represent date.
+  * Returns a movie's id, title and release date.
+  * Sample: 
+        ```
+        curl -X POST 'https://capstone-udacity1.herokuapp.com/movies/5' --header 'Authorization: Bearer <token>' --header "Content-Type: application/json" -d '{"title": "New Movie soon", "release_date": "07-25-2021"}'
+        ```
 ```
 {
-  "current_category": null,
-  "questions": [
-    {
-      "answer": "Apollo 13",
-      "category": 5,
-      "difficulty": 4,
-      "id": 2,
-      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
-    }
-  ],
-  "total_questions": 1
-}
-```
-
-#### POST '/questions'
-
-    * Creates new question
-    * Creates a new question using the submitted question, answer, category and difficulty. Return the ID of the created book and success value.
-    * Request Arguments:
-    `question` - statement of a question,
-    `answer` - statement of an answer,
-    `category` - ID of category,
-    `difficulty` - difficulty level from 1 to 5.
-    * Sample:
-         ```
-         curl localhost:5000/questions -X POST -H "Content-Type: application/json" -d '{
-             "question": "Hiiii",
-             "answer": "kokokokok",
-             "difficulty": "3",
-             "category": "1"
-         }'
-         ```
-```
-{
-  "created": 24,
-  "success": true
-}
-```
-
-#### GET '/categories/{category_id}/questions'
-
-  * Fetches the questions for the requested category to be displayed on the page.
-  * Request Parameters: `category_id`. The ID of the existing category.
-  * Response: a list of question objects, current category and total number of questions in this category as JSON object.
-  * Sample: `curl localhost:5000/categories/2/questions`
-```
-{
-  "current_category": {
-    "2": "Art"
-  },
-  "questions": [
-    {
-      "answer": "Escher",
-      "category": 2,
-      "difficulty": 1,
-      "id": 16,
-      "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+    "movie": {
+        "id": 5,
+        "release_date": "Sunday, Jul 25 2021",
+        "title": "New Movie soon"
     },
-    {
-      "answer": "Jackson Pollock",
-      "category": 2,
-      "difficulty": 2,
-      "id": 19,
-      "question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
-    }
-  ],
-  "total_questions": 4
+    "success": true
 }
 ```
 
-#### POST '/quizzes'
+#### POST '/actors'
 
-  * Fetches a random question within the given category, that is not one of the previous questions.
-  * Request Arguments: 
-  `previous_questions` - list of already answered questions,
-  `quiz_category` - the given category object.
-  * Response: the random question object as JSON object.
-  * Sample:  
-       ```
-          curl localhost:5000/quizzes -X POST -H "Content-Type: application/json" -d '{
-               "previous_questions": [],
-               "quiz_category": {"type":"History", "id":1}
-          }'
-       ```
+  * Add an actor to database.
+  * Request Arguments: `name`, `age` and `gender`. `Gender` should be `male`, `female` or `other`. `Age` as a Integer.
+  * Returns an actor's id, name, age and gender.
+  * Sample: 
+        ```
+        curl -X POST 'https://capstone-udacity1.herokuapp.com/actors/6' --header 'Authorization: Bearer <token>' --header "Content-Type: application/json" -d '{"name": "John Smith", "age": 55, "gender": "male"}'
+        ```
 ```
 {
-  "question": {
-    "answer": "Alexander Fleming",
-    "category": 1,
-    "difficulty": 3,
-    "id": 21,
-    "question": "Who discovered penicillin?"
-  }
+    "actor": {
+        "age": 55,
+        "gender": "male",
+        "id": 6,
+        "name": "John Smith"
+    },
+    "success": true
+}
+```
+
+#### PATCH '/movies/{movie_id}'
+
+  * Modify a movie with given id.
+  * Request Arguments:
+`title` - name of movie, optional,
+`release_date` - release date of movie, optional,
+`actors` - list of actors ids assigned to the movie, list of integers, optional.
+  * Sample: 
+        ```
+        curl -X PATCH 'https://capstone-udacity1.herokuapp.com/movies/1' --header 'Authorization: Bearer <token>' --header "Content-Type: application/json" -d '{"title": "77777", "actors": [4, 5]}'
+        ```
+```
+{
+    "movie": {
+        "id": 1,
+        "release_date": "Saturday, Apr 16 2022",
+        "title": "77777"
+    },
+    "success": true
+}
+```
+
+#### PATCH '/actors/{actor_id}'
+
+  * Modify an actor with given id.
+  * Request Arguments:
+`name` - name of actor, string, optional,
+`age` - age of actor, integer, optional,
+`gender` - actor's gender, string (male, female or other), optional,
+`actors` - list of movies ids to which actor is assigned, list of integers, optional.
+  * Sample: 
+        ```
+        curl -X PATCH 'https://capstone-udacity1.herokuapp.com/actors/1' --header 'Authorization: Bearer <token>' --header "Content-Type: application/json" -d '{"name": "new name", "gender": "female"}'
+        ```
+```
+{
+    "actor": {
+        "age": 55,
+        "gender": "female",
+        "id": 1,
+        "name": "new name"
+    },
+    "success": true
 }
 ```
 
