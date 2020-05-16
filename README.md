@@ -72,19 +72,25 @@ The application uses Auth0 for authenticating users. I have created 3 test users
 application.
 
 **Casting Assistant**
-Username => `asisstant@assistant.com`
-Password => `Assistant1`
-valid_token until 17.05 19:00 => in `setup.sh` file
+
+- Username => `asisstant@assistant.com`
+- Password => `Assistant1`
+- Permission => Can view actors and movies
+- valid_token until 17.05 19:00 => in `setup.sh` file
 
 **Casting Director**
-Username => `director@director.com`
-Password => `Director1`
-valid_token until 17.05 19:00 => in `setup.sh` file
+
+- Username => `director@director.com`
+- Password => `Director1`
+- Permission => Can view actors and movies. Add or delete an actor from the database. Modify actors or movies.
+- valid_token until 17.05 19:00 => in `setup.sh` file
 
 **Executive Producer**
-Username => `producer@producer`
-Password => `Producer1`
-valid_token until 17.05 19:00 => in `setup.sh` file
+
+- Username => `producer@producer`
+- Password => `Producer1`
+- Permission => Can view actors and movies.  Add or delete an actor from the database. Modify actors or movies. Add or delete a movie from the database.
+- valid_token until 17.05 19:00 => in `setup.sh` file
 
 To run the tests, run
 ```
