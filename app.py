@@ -378,15 +378,15 @@ def create_app():
             'message': 'unprocessable'
         }), 422
 
-    # @app.errorhandler(Exception)
-    # def internal_error(error):
-    #     '''Generic error handler for all exceptions'''
+    @app.errorhandler(Exception)
+    def internal_error(error):
+        '''Generic error handler for all exceptions'''
 
-    #     return jsonify({
-    #         'success': False,
-    #         'error': 500,
-    #         'message': 'Something went wrong!'
-    #     }), 500
+        return jsonify({
+            'success': False,
+            'error': 500,
+            'message': 'Something went wrong!'
+        }), 500
 
     @app.errorhandler(AuthError)
     def authorization_error(error):
