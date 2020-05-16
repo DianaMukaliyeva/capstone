@@ -21,3 +21,9 @@ CREATE TABLE public.movie_actor (
     PRIMARY KEY (movie_id,actor_id)
 );
 
+INSERT INTO movies(title, release_date) VALUES('Test Movie1', '09-25-2025');
+INSERT INTO movies(title, release_date) VALUES('Test Movie2', '10-10-2030');
+INSERT INTO movies(title, release_date) VALUES('Test Movie3', '01-01-2022');
+INSERT INTO actors(name, age, gender) VALUES('Test Actor1', 35, 'male');
+INSERT INTO actors(name, age, gender) VALUES('Test Actress', 22, 'female');
+INSERT INTO actors(name, age, gender) VALUES('Test Actor2', 53, 'male');

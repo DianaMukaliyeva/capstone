@@ -29,7 +29,7 @@ class CapstoneTestCase(unittest.TestCase):
             f'postgres://postgres:postgres@localhost:5432/{self.db_name}'
         setup_db(self.app, self.database_path)
 
-        self.new_actor ={
+        self.new_actor = {
             'name': 'Test Name',
             'age': 35,
             'gender': 'male'
@@ -38,43 +38,6 @@ class CapstoneTestCase(unittest.TestCase):
             'title': 'Test movie',
             'release_date': '12-12-2012'
         }
-
-        # Insert data
-        movie1 = Movie(
-            title = "test102",
-            release_date = "2021-05-12"
-        )
-        movie2 = Movie(
-            title = "test102",
-            release_date = "2021-05-12"
-        )
-        movie3 = Movie(
-            title = "test102",
-            release_date = "2021-05-12"
-        )
-        movie1.insert()
-        movie2.insert()
-        movie3.insert()
-        
-        artist1 = Actor(
-            name = "Ban Jovi",
-            age = 24,
-            gender = "male"
-        )
-        artist2 = Actor(
-            name = "Ban Jovi",
-            age = 24,
-            gender = "male"
-        )
-        artist3 = Actor(
-            name = "Ban Jovi",
-            age = 24,
-            gender = "male"
-        )
-        artist1.insert()
-        artist2.insert()
-        artist3.insert()
-
 
         # Binds the app to the current context
         with self.app.app_context():
@@ -116,29 +79,59 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
+    def test_get_nonexisting_movie_casting_assistant_404(self):
+        res = self.client().get('/movies/100', headers=assistant_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+
+    def test_get_nonexisting_actor_casting_assistant_404(self):
+        res = self.client().get('/actors/100', headers=assistant_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+
     def test_post_movies_casting_assistant_401(self):
-        res = self.client().post('/movies', headers=assistant_header, json=self.new_movie)
+        res = self.client().post(
+            '/movies',
+            headers=assistant_header,
+            json=self.new_movie
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
 
     def test_post_actors_casting_assistant_401(self):
-        res = self.client().post('/actors', headers=assistant_header, json=self.new_actor)
+        res = self.client().post(
+            '/actors',
+            headers=assistant_header,
+            json=self.new_actor
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
 
     def test_patch_movies_casting_assistant_401(self):
-        res = self.client().patch('/movies/1', headers=assistant_header, json={'release_date': '21-12-2012'})
+        res = self.client().patch(
+            '/movies/1',
+            headers=assistant_header,
+            json={'release_date': '21-12-2012'}
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
 
     def test_patch_actors_casting_assistant_401(self):
-        res = self.client().patch('/actors/1', headers=assistant_header, json={'age': 53})
+        res = self.client().patch(
+            '/actors/1',
+            headers=assistant_header,
+            json={'age': 53}
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
@@ -157,6 +150,154 @@ class CapstoneTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
+
+    # CASTING DIRECTOR TESTING
+
+    def test_get_movies_casting_director(self):
+        res = self.client().get('/movies', headers=director_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_get_actors_casting_director(self):
+        res = self.client().get('/actors', headers=director_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_post_movies_casting_director_401(self):
+        res = self.client().post(
+            '/movies',
+            headers=director_header,
+            json=self.new_movie
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+
+    def test_post_actors_casting_director(self):
+        res = self.client().post(
+            '/actors',
+            headers=director_header,
+            json=self.new_actor
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_patch_movies_casting_director(self):
+        res = self.client().patch(
+            '/movies/1',
+            headers=director_header,
+            json={'release_date': '02-12-2012'}
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_patch_actors_casting_director(self):
+        res = self.client().patch(
+            '/actors/1',
+            headers=director_header,
+            json={'age': 53}
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_delete_movies_casting_director_401(self):
+        res = self.client().delete('/movies/2', headers=director_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+
+    def test_delete_actors_casting_director(self):
+        res = self.client().delete('/actors/2', headers=director_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    # EXECUTIVE PRODUCER TESTING
+
+    def test_get_movies_executive_producer(self):
+        res = self.client().get('/movies', headers=producer_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_get_actors_executive_producer(self):
+        res = self.client().get('/actors', headers=producer_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_post_movies_executive_producer(self):
+        res = self.client().post(
+            '/movies',
+            headers=producer_header,
+            json=self.new_movie
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_post_actors_executive_producer(self):
+        res = self.client().post(
+            '/actors',
+            headers=producer_header,
+            json=self.new_actor
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_patch_movies_executive_producer(self):
+        res = self.client().patch(
+            '/movies/1',
+            headers=producer_header,
+            json={'release_date': '03-12-2012'}
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_patch_actors_executive_producer(self):
+        res = self.client().patch(
+            '/actors/1',
+            headers=producer_header,
+            json={'age': 53}
+        )
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_delete_movies_executive_producer(self):
+        res = self.client().delete('/movies/3', headers=producer_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_delete_actors_executive_producer(self):
+        res = self.client().delete('/actors/3', headers=producer_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
 
 
 '''Make the tests conveniently executable'''
