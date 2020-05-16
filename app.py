@@ -32,9 +32,7 @@ def create_app():
     def index():
         '''Redirecting to login page'''
 
-        return redirect('https://capstone-udacity.eu.auth0.com/authorize?audience=capstone&response_type=token&\
-            client_id=8V0Rt7JzfDgHBnHXd5gWJ1uMxkfnFu1l&\
-            redirect_uri=https://capstone-udacity1.herokuapp.com/movies')
+        return redirect('https://capstone-udacity.eu.auth0.com/authorize?audience=capstone&response_type=token&client_id=8V0Rt7JzfDgHBnHXd5gWJ1uMxkfnFu1l&redirect_uri=https://capstone-udacity1.herokuapp.com/movies')
 
     # Movies
     # ---------------------------------------------------------
