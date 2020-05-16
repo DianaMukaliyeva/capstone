@@ -36,7 +36,7 @@ def create_app():
 
         return redirect('https://capstone-udacity.eu.auth0.com/authorize?response_type=token\
             &client_id=8V0Rt7JzfDgHBnHXd5gWJ1uMxkfnFu1l\
-            &redirect_uri={os.getenv("REDIRECT_URI")}')
+            &redirect_uri={}'.format(os.getenv('REDIRECT_URI')))
 
     # Movies
     # ---------------------------------------------------------
