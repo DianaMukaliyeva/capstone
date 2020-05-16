@@ -32,7 +32,9 @@ def create_app():
     def index():
         '''Greeting from Custom Agency'''
 
-        return 'Hello there! You are about to sign in to Casting agency.\n'
+        return redirect('https://capstone-udacity.eu.auth0.com/authorize?response_type=token\
+            &client_id=8V0Rt7JzfDgHBnHXd5gWJ1uMxkfnFu1l\
+            &redirect_uri=http://localhost:5000/movies')
 
     # Movies
     # ---------------------------------------------------------
