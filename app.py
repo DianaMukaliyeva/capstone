@@ -73,6 +73,7 @@ def create_app():
             abort(404)
         try:
             return jsonify({
+                'success': True,
                 'title': movie.title,
                 'actors': [actor.format() for actor in movie.actors]
             })
@@ -196,7 +197,7 @@ def create_app():
 
         actors = Actor.query.all()
         return jsonify({
-            'status': True,
+            'success': True,
             'actors': [actor.format() for actor in actors]
         })
 
@@ -220,6 +221,7 @@ def create_app():
             abort(404)
         try:
             return jsonify({
+                'success': True,
                 'actor': actor.format(),
                 'movies': [movie.format() for movie in actor.movies]
             })
