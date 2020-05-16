@@ -30,9 +30,9 @@ def create_app():
 
     @app.route('/')
     def index():
-        '''Greeting from Custom Agency'''
+        '''Redirecting to login page'''
 
-        return 'Hello there! You are about to sign in to Casting agency.\n'
+        return redirect(os.getenv('REDIRECT_URI'))
 
     # Movies
     # ---------------------------------------------------------
@@ -166,7 +166,7 @@ def create_app():
 
         Returns json object
         -------------------
-        deleted: deleted movie's id and title
+        deleted: deleted movie
         '''
 
         movie = Movie.query.filter_by(id=movie_id).one_or_none()
@@ -212,7 +212,7 @@ def create_app():
 
         Returns in json format
         ----------------------
-        actor: actor's id, name
+        actor: actor
         movies: list of movies
         '''
 
@@ -327,7 +327,7 @@ def create_app():
 
         Returns json object
         -------------------
-        delete: deleted actor's id and name
+        delete: deleted actor
         '''
 
         actor = Actor.query.filter_by(id=actor_id).one_or_none()
